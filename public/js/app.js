@@ -60034,7 +60034,8 @@ var app = new Vue({
         this.chat.user.push('you');
         this.chat.time.push(this.getTime());
         axios.post('/send', {
-          message: this.message
+          message: this.message,
+          chat: this.chat
         }).then(function (response) {
           // console.log(response);
           _this.message = '';
@@ -60046,40 +60047,74 @@ var app = new Vue({
     getTime: function getTime() {
       var time = new Date();
       return time.getHours() + ':' + time.getMinutes();
+    },
+    getOldMessages: function getOldMessages() {
+      var _this2 = this;
+
+      axios.post('/getOldMessage').then(function (response) {
+        // console.log(response);
+        if (response.data != '') {
+          _this2.chat = response.data;
+        }
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    deleteSession: function deleteSession() {
+      var _this3 = this;
+
+      axios.post('/deleteSession').then(function (response) {
+        _this3.$toaster.error('chat has been deleted');
+
+        _this3.chat.message = [];
+        _this3.chat.color = [];
+        _this3.chat.user = [];
+        _this3.chat.time = [];
+      });
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this4 = this;
 
+    this.getOldMessages();
     Echo["private"]('chat').listen('ChatEvent', function (e) {
-      _this2.chat.message.push(e.message);
+      _this4.chat.message.push(e.message);
 
-      _this2.chat.color.push('warning');
+      _this4.chat.color.push('warning');
 
-      _this2.chat.user.push(e.user);
+      _this4.chat.user.push(e.user);
 
-      _this2.chat.time.push(_this2.getTime()); // console.log(e);
+      _this4.chat.time.push(_this4.getTime());
 
+      axios.post('/saveToSession', {
+        chat: _this4.chat
+      }).then(function (response) {// console.log(response);
+        // if(response.data != ''){
+        //     this.chat = response.data;
+        // }
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }).listenForWhisper('typing', function (e) {
       if (e.name != '') {
-        _this2.typing = 'typing...';
+        _this4.typing = 'typing...';
       } else {
-        _this2.typing = '';
+        _this4.typing = '';
       }
     });
     Echo.join('chat').here(function (users) {
       //
-      _this2.numberOfUsers = users.length; // console.log(users);
+      _this4.numberOfUsers = users.length; // console.log(users);
     }).joining(function (user) {
       // console.log(user.name);
-      _this2.numberOfUsers += 1;
+      _this4.numberOfUsers += 1;
 
-      _this2.$toaster.success(user.name + ' has joined');
+      _this4.$toaster.success(user.name + ' has joined');
     }).leaving(function (user) {
       // console.log(user.name);
-      _this2.numberOfUsers -= 1;
+      _this4.numberOfUsers -= 1;
 
-      _this2.$toaster.warning(user.name + ' has left');
+      _this4.$toaster.warning(user.name + ' has left');
     });
   }
 });

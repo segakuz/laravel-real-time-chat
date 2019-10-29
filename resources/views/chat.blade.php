@@ -25,6 +25,7 @@
 
                 <li class="list-group-item active">Chat room
                     <span class="badge badge-pill badge-light ml-1" v-cloak>@{{ numberOfUsers }}</span>
+                    <span class="btn btn-danger btn-sm float-right" @click="deleteSession">Delete</span>
                 </li>
                 <div class="badge badge-pill badge-primary">@{{ typing }}</div>
 

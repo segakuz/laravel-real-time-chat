@@ -74,6 +74,7 @@ const app = new Vue({
 
                 axios.post('/send', {
                     message: this.message,
+                    chat: this.chat
                   })
                   .then(response => {
                     // console.log(response);
@@ -90,15 +91,50 @@ const app = new Vue({
             let time = new Date();
             return time.getHours() + ':' + time.getMinutes();
         },
+        getOldMessages(){
+            axios.post('/getOldMessage')
+              .then(response => {
+                // console.log(response);
+                if(response.data != ''){
+                    this.chat = response.data;
+                }
+              })
+              .catch(error => {
+                console.log(error);
+              });
+        },
+        deleteSession(){
+            axios.post('/deleteSession')
+                .then(response => {
+                    this.$toaster.error('chat has been deleted');
+                    this.chat.message = [];
+                    this.chat.color = [];
+                    this.chat.user = [];
+                    this.chat.time = [];
+                });
+        }
     },
     mounted() {
+        this.getOldMessages();
         Echo.private('chat')
             .listen('ChatEvent', (e) => {
                 this.chat.message.push(e.message);
                 this.chat.color.push('warning');
                 this.chat.user.push(e.user);
                 this.chat.time.push(this.getTime());
-                // console.log(e);
+
+                axios.post('/saveToSession', {
+                    chat: this.chat,
+                })
+                .then(response => {
+                    // console.log(response);
+                    // if(response.data != ''){
+                    //     this.chat = response.data;
+                    // }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
             })
             .listenForWhisper('typing', (e) => {
                 if(e.name != ''){
