@@ -8,8 +8,21 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 window.VueChatScroll = require('vue-chat-scroll');
+window.Toaster = require('v-toaster');
+require('v-toaster/dist/v-toaster.css');
 
 Vue.use(VueChatScroll);
+Vue.use(Toaster, {timeout: 5000});
+
+//
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+
+
 
 /**
  * The following block of code may be used to automatically register your
@@ -35,15 +48,81 @@ const app = new Vue({
     data: {
         message: '',
         chat: {
-            message: []
+            message: [],
+            user: [],
+            color: [],
+            time: []
+        },
+        typing: '',
+        numberOfUsers: 0
+    },
+    watch: {
+        message() {
+            Echo.private('chat')
+                .whisper('typing', {
+                    name: this.message
+                });
         }
     },
     methods: {
         send(){
             if(this.message.length != 0){
                 this.chat.message.push(this.message);
-                this.message = '';
+                this.chat.color.push('success');
+                this.chat.user.push('you');
+                this.chat.time.push(this.getTime());
+
+                axios.post('/send', {
+                    message: this.message,
+                  })
+                  .then(response => {
+                    // console.log(response);
+                    this.message = '';
+                  })
+                  .catch(error => {
+                    console.log(error);
+                  });
+
+
             }
         },
-    }
+        getTime(){
+            let time = new Date();
+            return time.getHours() + ':' + time.getMinutes();
+        },
+    },
+    mounted() {
+        Echo.private('chat')
+            .listen('ChatEvent', (e) => {
+                this.chat.message.push(e.message);
+                this.chat.color.push('warning');
+                this.chat.user.push(e.user);
+                this.chat.time.push(this.getTime());
+                // console.log(e);
+            })
+            .listenForWhisper('typing', (e) => {
+                if(e.name != ''){
+                    this.typing = 'typing...';
+                } else {
+                    this.typing = '';
+                }
+            });
+
+            Echo.join('chat')
+            .here((users) => {
+                //
+                this.numberOfUsers = users.length;
+                // console.log(users);
+            })
+            .joining((user) => {
+                // console.log(user.name);
+                this.numberOfUsers += 1;
+                this.$toaster.success(user.name + ' has joined');
+            })
+            .leaving((user) => {
+                // console.log(user.name);
+                this.numberOfUsers -= 1;
+                this.$toaster.warning(user.name + ' has left');
+            });
+    },
 });

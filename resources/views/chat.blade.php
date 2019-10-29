@@ -21,13 +21,21 @@
     <div class="container">
         <div class="row" id="app">
 
-            <div class="offset-4 col-4">
+            <div class="offset-md-4 col-md-4 offset-1 col-10">
 
-                <li class="list-group-item active">Chat room</li>
+                <li class="list-group-item active">Chat room
+                    <span class="badge badge-pill badge-light ml-1" v-cloak>@{{ numberOfUsers }}</span>
+                </li>
+                <div class="badge badge-pill badge-primary">@{{ typing }}</div>
 
                 <ul class="list-group" v-chat-scroll>
 
-                    <message v-for="value in chat.message" :key=value.index color="success">
+                    <message v-for="value,index in chat.message"
+                    :key=value.index
+                    :color=chat.color[index]
+                    :user=chat.user[index]
+                    :time=chat.time[index]
+                    v-cloak>
                         @{{ value }}
                     </message>
 

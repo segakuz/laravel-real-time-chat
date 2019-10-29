@@ -1,7 +1,8 @@
 <template>
     <div>
-        <li class="list-group-item" :class="className"><slot></slot></li>
-        <small class="badge float-right" :class="badgeClass">You</small>
+        <li class="list-group-item" :class="className"><slot></slot>
+        <span class="time ml-1">{{ time }}</span></li>
+        <small class="badge float-right" :class="badgeClass">{{ user }}</small>
     </div>
 </template>
 
@@ -9,6 +10,8 @@
     export default {
         props: [
             'color',
+            'user',
+            'time'
         ],
         computed:{
             className(){
@@ -19,7 +22,15 @@
             },
         },
         mounted() {
-            console.log('Component message mounted.')
+            // console.log('Component message mounted.');
         }
     }
 </script>
+
+<style>
+    .time{
+        font-size: 9px;
+        margin-top: 10px;
+        color: #000000;
+    }
+</style>
