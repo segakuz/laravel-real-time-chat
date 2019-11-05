@@ -1846,14 +1846,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['color', 'user', 'time'],
   computed: {
     className: function className() {
-      return 'list-group-item-' + this.color;
+      return this.color == "success" ? "text-white bg-primary" : "bg-light";
     },
     badgeClass: function badgeClass() {
       return 'badge-' + this.color;
+    },
+    wrapperClass: function wrapperClass() {
+      return this.color == "success" ? "offset-1" : "";
     }
   },
   mounted: function mounted() {// console.log('Component message mounted.');
@@ -8304,7 +8311,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.time{\n    font-size: 9px;\n    margin-top: 10px;\n    color: #000000;\n}\n", ""]);
+exports.push([module.i, "\n.time{\n    font-size: 9px;\n    margin-top: 10px;\n}\n", ""]);
 
 // exports
 
@@ -47797,22 +47804,28 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "li",
-      { staticClass: "list-group-item", class: _vm.className },
-      [
-        _vm._t("default"),
-        _vm._v(" "),
-        _c("span", { staticClass: "time ml-1" }, [_vm._v(_vm._s(_vm.time))])
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c("small", { staticClass: "badge float-right", class: _vm.badgeClass }, [
-      _vm._v(_vm._s(_vm.user))
-    ])
-  ])
+  return _c(
+    "div",
+    { staticClass: "col-11 mb-3 clearfix", class: _vm.wrapperClass },
+    [
+      _c("div", { staticClass: "card mb-1", class: _vm.className }, [
+        _c(
+          "div",
+          { staticClass: "card-body" },
+          [
+            _vm._t("default"),
+            _vm._v(" "),
+            _c("span", { staticClass: "time ml-1" }, [_vm._v(_vm._s(_vm.time))])
+          ],
+          2
+        )
+      ]),
+      _vm._v(" "),
+      _c("small", { staticClass: "badge float-right", class: _vm.badgeClass }, [
+        _vm._v(_vm._s(_vm.user))
+      ])
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

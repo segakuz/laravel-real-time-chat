@@ -1,7 +1,11 @@
 <template>
-    <div>
-        <li class="list-group-item" :class="className"><slot></slot>
-        <span class="time ml-1">{{ time }}</span></li>
+    <div class="col-11 mb-3 clearfix" :class="wrapperClass">
+        <div class="card mb-1" :class="className">
+            <div class="card-body">
+                <slot></slot>
+                <span class="time ml-1">{{ time }}</span>
+            </div>
+        </div>
         <small class="badge float-right" :class="badgeClass">{{ user }}</small>
     </div>
 </template>
@@ -15,10 +19,13 @@
         ],
         computed:{
             className(){
-                return 'list-group-item-' + this.color
+                return this.color == "success" ? "text-white bg-primary" : "bg-light";
             },
             badgeClass(){
                 return 'badge-' + this.color;
+            },
+            wrapperClass() {
+                return this.color == "success" ? "offset-1" : "";
             },
         },
         mounted() {
@@ -31,6 +38,5 @@
     .time{
         font-size: 9px;
         margin-top: 10px;
-        color: #000000;
     }
 </style>

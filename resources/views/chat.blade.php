@@ -9,41 +9,53 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <title>Document</title>
     <style>
-        .list-group {
+        .chat-container {
+            max-width: 800px;
+        }
+        .chat {
+            width: 100%;
+            height: 90vh;
+            margin-top: 5vh;
+        }
+        .chat-body {
             overflow-y: scroll;
-            height: 200px;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <div class="container chat-container">
         <div class="row" id="app">
 
-            <div class="offset-md-4 col-md-4 offset-1 col-10">
+            <div class="card chat">
 
-                <li class="list-group-item active">Chat room
-                    <span class="badge badge-pill badge-light ml-1" v-cloak>@{{ numberOfUsers }}</span>
+                <div class="card-header">
+                    <h1 class="d-inline">Chat room</h1>
+                    <span class="badge badge-pill badge-secondary ml-1" v-cloak>@{{ numberOfUsers }}</span>
                     <span class="btn btn-danger btn-sm float-right" @click="deleteSession">Delete</span>
-                </li>
-                <div class="badge badge-pill badge-primary">@{{ typing }}</div>
+                </div>
 
-                <ul class="list-group" v-chat-scroll>
+                <div class="card-body chat-body" v-chat-scroll>
+                    <div>
 
-                    <message v-for="value,index in chat.message"
-                    :key=value.index
-                    :color=chat.color[index]
-                    :user=chat.user[index]
-                    :time=chat.time[index]
-                    v-cloak>
-                        @{{ value }}
-                    </message>
+                        <message v-for="value,index in chat.message"
+                        :key=value.index
+                        :color=chat.color[index]
+                        :user=chat.user[index]
+                        :time=chat.time[index]
+                        v-cloak>
+                            @{{ value }}
+                        </message>
 
-                </ul>
+                    </div>
+                    <div class="badge badge-pill badge-primary">@{{ typing }}</div>
+                </div>
 
-                <input type="text" class="form-control" placeholder="Type your message here ..." v-model="message"
-                @keyup.enter="send">
+                <div class="card-footer">
+                    <input type="text" class="form-control" placeholder="Type your message here ..." v-model="message"
+                    @keyup.enter="send">
+                </div>
 
             </div>
 
